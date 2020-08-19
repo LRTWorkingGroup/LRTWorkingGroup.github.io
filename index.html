@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Likelihood Ratio Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+	<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"> -->
+	<!-- <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script> -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+	<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto&display=swap" rel="stylesheet">	
+	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.6.4/math.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.js"></script>
+	<script src="https://unpkg.com/plottable@latest/plottable.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/plottable@latest/plottable.css">
+	<!-- <script src="src/sjs.js"></script> -->
+	   
+	<style type="text/css">
+		div.border-split-left {
+			border-right: solid #ddd;
+		}
+		th { 
+			font-size: 12px; 
+			text-align: center;
+		}
+		td { 
+			font-size: 12px; 
+			text-align: center;
+		}
+	</style>   
+</head>
+<body>
+	<br>
+	<div class="fluid-container">
+		<div class="row">
+			<div class="offset-md-1 col-md-5  border-split-left" >
+				<center><h5>LRT Results from R (Number of simulations = 1000)</h5></center>
+	            <table class="display" id="table0" style="width: 80%; ">
+        	        <thead>
+			            <tr>
+			                <th>AEID</th>
+			                <th>ntrt</th>
+			                <th>nidot</th>
+			                <th>ndotj</th>
+			                <th>ndotdot</th>
+			                <th>RR</th>
+			                <th>logLR</th>
+			                <th>T_alpha</th>
+			                <th>is_signal</th>
+			                <th>pvalue</th>
+			            </tr>
+			        </thead>
+		        </table>
+			</div>
+			<div class=" col-md-5">
+				<center><h5>LRT Results from JavaScript (Number of simulations = 1000)</h5></center>
+	            <table class="display" id="table1" style="width: 80%; ">
+        	        <thead>
+			            <tr>
+			                <th>AEID</th>
+			                <th>ntrt</th>
+			                <th>nidot</th>
+			                <th>ndotj</th>
+			                <th>ndotdot</th>
+			                <th>RR</th>
+			                <th>logLR</th>
+			                <th>T_alpha</th>
+			                <th>is_signal</th>
+			                <th>pvalue</th>
+			            </tr>
+			        </thead>
+		        </table>
+			</div>
+		</div>
+	</div>
+	</body>
+	<script>
+			
+
+			const raw = [{"AEID":"Abnormal behaviour","ntrt":329,"nidot":6847,"ndotj":2456,"ndotdot":104060},{"AEID":"Anhedonia","ntrt":12,"nidot":963,"ndotj":2456,"ndotdot":104060},{"AEID":"Anxiety","ntrt":276,"nidot":21267,"ndotj":2456,"ndotdot":104060},{"AEID":"Completed suicide","ntrt":49,"nidot":10106,"ndotj":2456,"ndotdot":104060},{"AEID":"Crying","ntrt":162,"nidot":4469,"ndotj":2456,"ndotdot":104060},{"AEID":"Decreased interest","ntrt":17,"nidot":406,"ndotj":2456,"ndotdot":104060},{"AEID":"Depressed mood","ntrt":69,"nidot":2510,"ndotj":2456,"ndotdot":104060},{"AEID":"Depression","ntrt":451,"nidot":24025,"ndotj":2456,"ndotdot":104060},{"AEID":"Depressive symptom","ntrt":3,"nidot":245,"ndotj":2456,"ndotdot":104060},{"AEID":"Dysphoria","ntrt":1,"nidot":255,"ndotj":2456,"ndotdot":104060},{"AEID":"Emotional disorder","ntrt":82,"nidot":2108,"ndotj":2456,"ndotdot":104060},{"AEID":"Emotional distress","ntrt":8,"nidot":3137,"ndotj":2456,"ndotdot":104060},{"AEID":"Feeling guilty","ntrt":2,"nidot":100,"ndotj":2456,"ndotdot":104060},{"AEID":"Feeling of despair","ntrt":18,"nidot":422,"ndotj":2456,"ndotdot":104060},{"AEID":"Frustration","ntrt":16,"nidot":333,"ndotj":2456,"ndotdot":104060},{"AEID":"Intentional self-i","ntrt":44,"nidot":1227,"ndotj":2456,"ndotdot":104060},{"AEID":"Mood altered","ntrt":129,"nidot":2279,"ndotj":2456,"ndotdot":104060},{"AEID":"Mood swings","ntrt":166,"nidot":3294,"ndotj":2456,"ndotdot":104060},{"AEID":"Negative thoughts","ntrt":12,"nidot":161,"ndotj":2456,"ndotdot":104060},{"AEID":"Self-injurious ide","ntrt":27,"nidot":579,"ndotj":2456,"ndotdot":104060},{"AEID":"Suicidal behaviour","ntrt":27,"nidot":327,"ndotj":2456,"ndotdot":104060},{"AEID":"Suicidal ideation","ntrt":434,"nidot":10807,"ndotj":2456,"ndotdot":104060},{"AEID":"Suicide attempt","ntrt":115,"nidot":7604,"ndotj":2456,"ndotdot":104060},{"AEID":"Tearfulness","ntrt":7,"nidot":589,"ndotj":2456,"ndotdot":104060}];
+
+			const R_lrt_result = [{"AEID":"Abnormal behaviour","ntrt":329,"nidot":6847,"ndotj":2456,"ndotdot":104060,"RR":2.1961,"stdRR":0.0579,"lowRR":1.9605,"uppRR":2.4601,"eij":161.6013,"point_sb":2.0327,"std_sb":0.112,"low_sb05":1.8485,"logLR":72.7567,"Pvector":0.0658,"Pobs":0.134,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Suicidal ideation","ntrt":434,"nidot":10807,"ndotj":2456,"ndotdot":104060,"RR":1.8521,"stdRR":0.0519,"lowRR":1.6729,"uppRR":2.0505,"eij":255.0643,"point_sb":1.7002,"std_sb":0.0816,"low_sb05":1.566,"logLR":59.2271,"Pvector":0.1039,"Pobs":0.1767,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Mood swings","ntrt":166,"nidot":3294,"ndotj":2456,"ndotdot":104060,"RR":2.2175,"stdRR":0.0784,"lowRR":1.9016,"uppRR":2.5858,"eij":77.7442,"point_sb":2.128,"std_sb":0.1649,"low_sb05":1.8567,"logLR":39.324,"Pvector":0.0317,"Pobs":0.0676,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Mood altered","ntrt":129,"nidot":2279,"ndotj":2456,"ndotdot":104060,"RR":2.4758,"stdRR":0.0879,"lowRR":2.0838,"uppRR":2.9415,"eij":53.7884,"point_sb":2.3854,"std_sb":0.2096,"low_sb05":2.0406,"logLR":38.8216,"Pvector":0.0219,"Pobs":0.0525,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Suicidal behaviour","ntrt":27,"nidot":327,"ndotj":2456,"ndotdot":104060,"RR":3.5262,"stdRR":0.1854,"lowRR":2.4517,"uppRR":5.0715,"eij":7.7178,"point_sb":3.3464,"std_sb":0.6381,"low_sb05":2.2967,"logLR":14.6063,"Pvector":0.0031,"Pobs":0.011,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Crying","ntrt":162,"nidot":4469,"ndotj":2456,"ndotdot":104060,"RR":1.5737,"stdRR":0.0798,"lowRR":1.3458,"uppRR":1.8403,"eij":105.4763,"point_sb":1.5334,"std_sb":0.1203,"low_sb05":1.3355,"logLR":13.6773,"Pvector":0.0429,"Pobs":0.066,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Emotional disorder","ntrt":82,"nidot":2108,"ndotj":2456,"ndotdot":104060,"RR":1.6705,"stdRR":0.1101,"lowRR":1.3462,"uppRR":2.0731,"eij":49.7525,"point_sb":1.6417,"std_sb":0.1807,"low_sb05":1.3444,"logLR":8.9415,"Pvector":0.0203,"Pobs":0.0334,"T_alpha":3.9373,"is_signal":true,"pvalue":0},{"AEID":"Negative thoughts","ntrt":12,"nidot":161,"ndotj":2456,"ndotdot":104060,"RR":3.1686,"stdRR":0.2784,"lowRR":1.836,"uppRR":5.4685,"eij":3.7999,"point_sb":2.9071,"std_sb":0.8222,"low_sb05":1.5545,"logLR":5.6128,"Pvector":0.0015,"Pobs":0.0049,"T_alpha":3.9373,"is_signal":true,"pvalue":0.02},{"AEID":"Self-injurious ide","ntrt":27,"nidot":579,"ndotj":2456,"ndotdot":104060,"RR":1.9866,"stdRR":0.189,"lowRR":1.3717,"uppRR":2.8773,"eij":13.6654,"point_sb":1.9413,"std_sb":0.3702,"low_sb05":1.3324,"logLR":5.088,"Pvector":0.0056,"Pobs":0.011,"T_alpha":3.9373,"is_signal":true,"pvalue":0.02},{"AEID":"Intentional self-i","ntrt":44,"nidot":1227,"ndotj":2456,"ndotdot":104060,"RR":1.5288,"stdRR":0.1494,"lowRR":1.1408,"uppRR":2.0489,"eij":28.9594,"point_sb":1.5106,"std_sb":0.2264,"low_sb05":1.1381,"logLR":3.4111,"Pvector":0.0118,"Pobs":0.0179,"T_alpha":3.9373,"is_signal":false,"pvalue":0.08},{"AEID":"Frustration","ntrt":16,"nidot":333,"ndotj":2456,"ndotdot":104060,"RR":2.0426,"stdRR":0.2447,"lowRR":1.2643,"uppRR":3.2999,"eij":7.8594,"point_sb":1.9738,"std_sb":0.4859,"low_sb05":1.1745,"logLR":3.247,"Pvector":0.0032,"Pobs":0.0065,"T_alpha":3.9373,"is_signal":false,"pvalue":0.08},{"AEID":"Feeling of despair","ntrt":18,"nidot":422,"ndotj":2456,"ndotdot":104060,"RR":1.8132,"stdRR":0.2315,"lowRR":1.1519,"uppRR":2.8542,"eij":9.9599,"point_sb":1.7687,"std_sb":0.4112,"low_sb05":1.0922,"logLR":2.6256,"Pvector":0.0041,"Pobs":0.0073,"T_alpha":3.9373,"is_signal":false,"pvalue":0.19},{"AEID":"Decreased interest","ntrt":17,"nidot":406,"ndotj":2456,"ndotdot":104060,"RR":1.7795,"stdRR":0.2382,"lowRR":1.1156,"uppRR":2.8385,"eij":9.5823,"point_sb":1.7357,"std_sb":0.4149,"low_sb05":1.0532,"logLR":2.3396,"Pvector":0.0039,"Pobs":0.0069,"T_alpha":3.9373,"is_signal":false,"pvalue":0.31},{"AEID":"Depressed mood","ntrt":69,"nidot":2510,"ndotj":2456,"ndotdot":104060,"RR":1.1695,"stdRR":0.1204,"lowRR":0.9236,"uppRR":1.4809,"eij":59.2404,"point_sb":1.1634,"std_sb":0.1395,"low_sb05":0.9338,"logLR":0.783,"Pvector":0.0241,"Pobs":0.0281,"T_alpha":3.9373,"is_signal":false,"pvalue":0.95},{"AEID":"Depression","ntrt":451,"nidot":24025,"ndotj":2456,"ndotdot":104060,"RR":0.7493,"stdRR":0.0516,"lowRR":0.6773,"uppRR":0.8291,"eij":567.0325,"point_sb":0.7955,"std_sb":0.0374,"low_sb05":0.734,"logLR":0,"Pvector":0.2309,"Pobs":0.1836,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Anxiety","ntrt":276,"nidot":21267,"ndotj":2456,"ndotdot":104060,"RR":0.4929,"stdRR":0.0634,"lowRR":0.4353,"uppRR":0.5581,"eij":501.9388,"point_sb":0.5503,"std_sb":0.0331,"low_sb05":0.4959,"logLR":0,"Pvector":0.2044,"Pobs":0.1124,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Completed suicide","ntrt":49,"nidot":10106,"ndotj":2456,"ndotdot":104060,"RR":0.1893,"stdRR":0.1439,"lowRR":0.1427,"uppRR":0.2509,"eij":238.5195,"point_sb":0.2071,"std_sb":0.0294,"low_sb05":0.1587,"logLR":0,"Pvector":0.0971,"Pobs":0.02,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Suicide attempt","ntrt":115,"nidot":7604,"ndotj":2456,"ndotdot":104060,"RR":0.6231,"stdRR":0.0948,"lowRR":0.5175,"uppRR":0.7503,"eij":179.4678,"point_sb":0.6418,"std_sb":0.0597,"low_sb05":0.5435,"logLR":0,"Pvector":0.0731,"Pobs":0.0468,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Emotional distress","ntrt":8,"nidot":3137,"ndotj":2456,"ndotdot":104060,"RR":0.1051,"stdRR":0.3537,"lowRR":0.0526,"uppRR":0.2103,"eij":74.0387,"point_sb":0.114,"std_sb":0.0391,"low_sb05":0.0497,"logLR":0,"Pvector":0.0301,"Pobs":0.0033,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Anhedonia","ntrt":12,"nidot":963,"ndotj":2456,"ndotdot":104060,"RR":0.5257,"stdRR":0.2876,"lowRR":0.2992,"uppRR":0.9236,"eij":22.7285,"point_sb":0.5381,"std_sb":0.1522,"low_sb05":0.2878,"logLR":0,"Pvector":0.0093,"Pobs":0.0049,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Tearfulness","ntrt":7,"nidot":589,"ndotj":2456,"ndotdot":104060,"RR":0.5021,"stdRR":0.3762,"lowRR":0.2402,"uppRR":1.0497,"eij":13.9014,"point_sb":0.5208,"std_sb":0.1902,"low_sb05":0.208,"logLR":0,"Pvector":0.0057,"Pobs":0.0029,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Dysphoria","ntrt":1,"nidot":255,"ndotj":2456,"ndotdot":104060,"RR":0.1658,"stdRR":0.9982,"lowRR":0.0234,"uppRR":1.1731,"eij":6.0185,"point_sb":0.2301,"std_sb":0.1879,"low_sb05":-0.079,"logLR":0,"Pvector":0.0025,"Pobs":0.0004,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Depressive symptom","ntrt":3,"nidot":245,"ndotj":2456,"ndotdot":104060,"RR":0.5182,"stdRR":0.5742,"lowRR":0.1682,"uppRR":1.5968,"eij":5.7824,"point_sb":0.5571,"std_sb":0.2978,"low_sb05":0.0672,"logLR":0,"Pvector":0.0024,"Pobs":0.0012,"T_alpha":3.9373,"is_signal":false,"pvalue":1},{"AEID":"Feeling guilty","ntrt":2,"nidot":100,"ndotj":2456,"ndotdot":104060,"RR":0.8473,"stdRR":0.7003,"lowRR":0.2147,"uppRR":3.3428,"eij":2.3602,"point_sb":0.8741,"std_sb":0.5528,"low_sb05":-0.0353,"logLR":0,"Pvector":0.001,"Pobs":0.0008,"T_alpha":3.9373,"is_signal":false,"pvalue":1}];
+
+							  
+
+			const SJS = (function(){
+
+			    // Utility functions
+			    function _sum(a, b) {
+					return a + b;
+			    };
+			    function _fillArrayWithNumber(size, num) {
+					// thanks be to stackOverflow... this is a beautiful one-liner
+					return Array.apply(null, Array(size)).map(Number.prototype.valueOf, num);
+			    };
+			    function _rangeFunc(upper) {
+					var i = 0, out = [];
+					while (i < upper) out.push(i++);
+					return out;
+			    };
+			    // Prototype function
+			    function _samplerFunction(size) {
+					if (!Number.isInteger(size) || size < 0) {
+					  throw new Error ("Number of samples must be a non-negative integer.");
+					}
+					if (!this.draw) {
+					    throw new Error ("Distribution must specify a draw function.");
+					}
+					var result = [];
+					while (size--) {
+					    result.push(this.draw());
+					}
+					return result;
+			    };
+			    // Prototype for discrete distributions
+			    var _samplerPrototype = {
+					sample: _samplerFunction
+			    };
+
+			    function Bernoulli(p) {
+
+					var result = Object.create(_samplerPrototype);
+
+					result.draw = function() {
+					    return (Math.random() < p) ? 1 : 0;
+					};
+
+					result.toString = function() {
+					    return "Bernoulli( " + p + " )";
+					};
+
+					return result;
+			    }
+
+			    function Binomial(n, p) {
+
+					var result = Object.create(_samplerPrototype),
+					bern = Sampling.Bernoulli(p);
+
+					result.draw = function() {
+					    return bern.sample(n).reduce(_sum, 0); // less space efficient than adding a bunch of draws, but cleaner :)
+					}
+
+					result.toString = function() { 
+					    return "Binom( " + 
+						[n, p].join(", ") + 
+						" )"; 
+					}
+
+					return result;
+			    }
+
+			    function Discrete(probs) { // probs should be an array of probabilities. (they get normalized automagically) //
+				
+					var result = Object.create(_samplerPrototype),
+					k = probs.length;
+
+					result.draw = function() {
+					    var i, p;
+					    for (i = 0; i < k; i++) {
+						p = probs[i] / probs.slice(i).reduce(_sum, 0); // this is the (normalized) head of a slice of probs
+						if (Bernoulli(p).draw()) return i;             // using the truthiness of a Bernoulli draw
+					    }
+					    return k - 1;
+					};
+
+					result.sampleNoReplace = function(size) {
+					    if (size>probs.length) {
+						throw new Error("Sampling without replacement, and the sample size exceeds vector size.")
+					    }
+					    var disc, index, sum, samp = [];
+					    var currentProbs = probs;
+					    var live = _rangeFunc(probs.length);
+					    while (size--) {
+						sum = currentProbs.reduce(_sum, 0);
+						currentProbs = currentProbs.map(function(x) {return x/sum; });
+						disc = SJS.Discrete(currentProbs);
+						index = disc.draw();
+						samp.push(live[index]);
+						live.splice(index, 1);
+						currentProbs.splice(index, 1);
+						sum = currentProbs.reduce(_sum, 0);
+						currentProbs = currentProbs.map(function(x) {return x/sum; });
+					    }
+					    currentProbs = probs;
+					    live = _rangeFunc(probs.length);
+					    return samp;
+					}
+
+					result.toString = function() {
+					    return "Dicrete( [" + 
+						probs.join(", ") + 
+						"] )";
+					};
+
+					return result;
+			    }
+
+			    function Multinomial(n, probs) {
+
+					var result = Object.create(_samplerPrototype),
+					k = probs.length,
+					disc = Discrete(probs);
+
+					result.draw = function() {
+					    var draw_result = _fillArrayWithNumber(k, 0),
+					    i = n;
+					    while (i--) {
+						draw_result[disc.draw()] += 1;
+					    }
+					    return draw_result;
+					};
+
+					result.toString = function() {
+					    return "Multinom( " + 
+						n + 
+						", [" + probs.join(", ") + 
+						"] )";
+					};
+
+					return result;
+			    }
+
+			    function NegBinomial(r, p) {
+					var result = Object.create(_samplerPrototype);
+
+					result.draw = function() {
+					    var draw_result = 0, failures = r;
+					    while (failures) {
+						Bernoulli(p).draw() ? draw_result++ : failures--;
+					    }
+					    return draw_result;
+					};
+
+					result.toString = function() {
+					    return "NegBinomial( " +  r +
+						", " + p + " )";
+					};
+
+					return result;
+			    }
+
+			    function Poisson(lambda) {
+					var result = Object.create(_samplerPrototype);
+
+					result.draw = function() {
+					    var draw_result, L = Math.exp(- lambda), k = 0, p = 1;
+
+					    do {
+						k++;
+						p = p * Math.random()
+					    } while (p > L);
+					    return k-1;
+					}
+
+					result.toString = function() {
+					    return "Poisson( " + lambda + " )";
+					}
+
+				return result;
+			    }
+
+			    return {
+				_fillArrayWithNumber: _fillArrayWithNumber, // REMOVE EVENTUALLY - this is just so the Array.prototype mod can work
+				_rangeFunc: _rangeFunc,
+				Bernoulli: Bernoulli,
+				Binomial: Binomial,
+				Discrete: Discrete,
+				Multinomial: Multinomial,
+				NegBinomial: NegBinomial,
+				Poisson: Poisson
+			    };
+			})();
+
+			const flogLRv = (x, fnidot, fndotj, fndotdot) => {
+				  logLRvr = x * (Math.log(x) - Math.log(fnidot));
+				  logLRvr = logLRvr + (fndotj - x) * (Math.log(fndotj - x) - Math.log(fndotdot - fnidot));
+				  logLRvr = logLRvr - fndotj * (Math.log(fndotj) - Math.log(fndotdot));
+				  // logLRvr[ is.na(logLRvr) ] <- 0
+				  logLRvr == undefined ? logLRvr = 0 : logLRvr;
+				  pj = x / fnidot;
+				  qj = (fndotj - x) / (fndotdot - fnidot);
+				  // logLRvr[ pj<qj ] <- 0
+				  pj < qj ? logLRvr = 0 : logLRvr;
+				  return(logLRvr);
+			}
+
+			// const fpvalue = (x, fsim) => {
+			// 	// return( mean( fsim > x ) )
+			// }
+
+			const fLRT = (qnum, number, times = 0.05) => {
+					// times = 0.05;
+					// mylist = data.concat();
+					t0 = performance.now();
+					mylist = qnum.concat();
+
+					mylist.map(n => {n.RR = n.ntrt *  (n.ndotdot - n.nidot) / (n.nidot * (n.ndotj - n.ntrt)) });
+					mylist.map(n => {n.stdRR = Math.sqrt(1 / n.ntrt  - 1 / n.nidot + 1 / (n.ndotj - n.ntrt) - 1 / (n.ndotdot - n.nidot)) });
+					mylist.map(n => {n.lowRR = Math.exp(Math.log(n.RR) - 1.96 * n.stdRR) });
+					mylist.map(n => {n.uppRR = Math.exp(Math.log(n.RR) + 1.96 * n.stdRR) });
+
+					mylist.map(n => {n.logLR = flogLRv(n.ntrt, fnidot=n.nidot, n.ndotj, n.ndotdot) });
+
+					// cnst_R = 100;
+					cnst_R = number;
+					mylist.map(n => {n.Pvector = n.nidot / n.ndotdot });
+					mylist.map(n => {n.Pobs = n.ntrt / n.ndotj });
+			 
+					mult = SJS.Multinomial(mylist[0].ndotj,mylist.reduce((p,c) => {p.push(c.Pvector); return p;}, [])); 
+					mult.draw();
+					// sim_cntdata = transpose(mult.sample(cnst_R));
+					sim_cntdata = mult.sample(cnst_R);
+
+					logLR_sim = sim_cntdata.reduce((p,c) => {
+						line = c.reduce((pre,cur,i) => {pre.push(flogLRv(cur, mylist[i].nidot, mylist[0].ndotj, mylist[0].ndotdot)); return pre;},[])
+						p.push(line);
+						return p;
+					},[]);
+
+					maxlogLR_sim = logLR_sim.reduce((p,c) => {p.push(Math.max.apply(null,c.filter(x => !isNaN(x)))); return p;}, []);
+
+					mylist.map(n => n.T_alpha = math.quantileSeq(maxlogLR_sim, 1 - times));
+					mylist.map(n => n.is_signal = n.logLR > n.T_alpha ? 'TRUE' : 'FALSE');
+
+					// mylist.map(n => n.pvalue = 
+					// 	maxlogLR_sim.filter(x => x > n.logLR).length > 0
+					// 	?  math.mean(maxlogLR_sim.filter(x => x > n.logLR))
+					// 	: 0
+					// );
+
+					mylist.map(n => n.pvalue = (maxlogLR_sim.filter(x => x > n.logLR)).length / maxlogLR_sim.length);
+
+					mylist.sort((a, b) => b.logLR - a.logLR);
+
+
+					// console.table(mylist);
+					// console.log(sim_cntdata);
+					// console.log(logLR_sim);
+					// console.log(maxlogLR_sim);
+
+					 t1 = performance.now();
+					 timeInSeconds = Math.round((t1 - t0) / 1000).toFixed(2);
+					
+
+					return mylist;
+
+
+
+			}
+
+
+
+			// d3.json('data/data.json', (err, json) => {
+				// console.log(json);
+				let LRT_result = fLRT(raw, 1000);
+
+		/////////// Performance Test//////////////////////
+				// perf = [];
+				// runTimes = 100;
+				// simulation = [100, 500, 1000, 2000, 5000];
+				// simulation.map(n => {
+				// 	for (var i = 0; i < 100; i++) {
+				// 		var LRT_result_i = 'LRT_result_' + i; 
+	 		// 			var LRT_result_i = fLRT(raw, n);
+				// 		perf.push({'ID': i, 'Simulation': n, 'T_alpha':LRT_result_i[0].T_alpha, 'Time': timeInSeconds});
+
+				// 		console.log(i,n);
+				// 	}
+				// });
+
+				// console.log(perf_data);
+
+				
+				
+
+				// let jsonString = JSON.stringify(LRT_result);
+				// console.log(LRT_result);
+
+				$(document).ready(function() {
+		  	  	    dataTable1 = $('#table1').DataTable( {
+				        "paging":   false,
+				        "bFilter": false,
+				        "info":     false,
+				        "scrollY": "500px",
+				        data: LRT_result,
+				        // render: $.fn.dataTable.render.number( ',', '.', 2, '$' ),
+				        columns: [
+				            { data: "AEID" },
+				            { data: "ntrt" },
+				            { data: "nidot" },
+				            { data: "ndotj" },
+				            { data: "ndotdot" },
+				            { data: "RR" },
+				            // { data: "stdRR" },
+				            // { data: "lowRR" },
+				            // { data: "uppRR" },
+				            { data: "logLR" },
+				            // { data: "Pvector" },
+				            // { data: "Pobs" },
+				            { data: "T_alpha" },
+				            { data: "is_signal" },
+				            { data: "pvalue" }
+					        ],
+				         columnDefs: [
+			          // { targets: [0, 1], "width": "20%", render: $.fn.dataTable.render.ellipsis(20, false, true) },
+			          // { targets: 2, "width": "33%", render: $.fn.dataTable.render.ellipsis(40, false, true) },
+			          // { targets: 3, "width": "16%", render: $.fn.dataTable.render.moment( 'Do MMM YYYYY' ) },
+				          		{ 
+				          		  targets: [5,6,7],  render: $.fn.dataTable.render.number(',', '.', 2)
+				          		}
+			     		],
+			     		"order": [] 
+				    });
+				    $('td:contains(\"true\")').closest('tr').css('color','blue');
+				    $('td:contains(\"true\")').closest('tr').css('color','blue');
+			    });
+
+
+			// });
+
+			// d3.json('data/R_lrt_result.json', (err, json) => {
+				// console.log(json);
+				$(document).ready(function() {
+		  	  	    dataTable0 = $('#table0').DataTable( {
+				        "paging":   false,
+				        "bFilter": false,
+				        "info":     false,
+				        "scrollY": "500px",
+				        data: R_lrt_result,
+				        // render: $.fn.dataTable.render.number( ',', '.', 2, '$' ),
+				        columns: [
+				            { data: "AEID" },
+				            { data: "ntrt" },
+				            { data: "nidot" },
+				            { data: "ndotj" },
+				            { data: "ndotdot" },
+				            { data: "RR" },
+				            { data: "logLR" },
+				            { data: "T_alpha" },
+				            { data: "is_signal" },
+				            { data: "pvalue" }
+					        ],
+				         columnDefs: [
+			          // { targets: [0, 1], "width": "20%", render: $.fn.dataTable.render.ellipsis(20, false, true) },
+			          // { targets: 2, "width": "33%", render: $.fn.dataTable.render.ellipsis(40, false, true) },
+			          // { targets: 3, "width": "16%", render: $.fn.dataTable.render.moment( 'Do MMM YYYYY' ) },
+				          		{ 
+				          		  targets: [5,6,7,9],  render: $.fn.dataTable.render.number(',', '.', 2)
+				          		}
+			     		],
+			     		"order": [] 
+				    });
+    				$('td:contains(\"true\")').closest('tr').css('color','blue');
+					$('td:contains(\"TRUE\")').closest('tr').css('color','blue');
+			    });
+
+			// });
+
+			// $(document).ready(function() {
+
+			// });
+
+
+	</script>
+</html>
